@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>주문 관리</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .product-list {
+      width: 45%;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .cart-list {
+      width: 45%;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .list-item:last-child {
+      border-bottom: none;
+    }
+    
+    .list-item .name {
+      font-weight: bold;
+    }
+    
+    .list-item .quantity {
+      color: #777;
+    }
+    
+    .list-item .price {
+      font-weight: bold;
+    }
+    
+    .total-price {
+      font-weight: bold;
+      text-align: right;
+    }
+    
+    .checkout-button {
+      display: block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .checkout-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="product-list">
+      <h2>상품 리스트</h2>
+      <ul>
+        <li class="list-item" th:each="product : ${products}">
+          <span class="name" th:text="${product.name}"></span>
+          <span class="price" th:text="${product.price}"></span>
+          <button th:onclick="addToCart([[${product.id}]], [[${product.name}]], [[${product.price}]])">담기</button>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="cart-list">
+      <h2>담기 리스트</h2>
+      <ul id="cart-items"></ul>
+      <div class="total-price">
+        총 가격: <span id="total-price">0원</span>
+      </div>
+      <button class="checkout-button" th:onclick="checkout()">주문하기</button>
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://pay.nicepay.co.kr/v1/js/"></script>
+  <script>
+	let cartItemsNames = [];
+	let cartItems = [];
+	
+    function addToCart(id, name, price) {
+      var cartItemsElement = document.getElementById('cart-items');
+      var total = document.getElementById('total-price');
+      
+      if (cartItemsNames.includes(name)) {
+        alert('이미 담긴 상품입니다.');
+        return;
+      }
+      
+      // 담기 처리
+      cartItemsNames.push(name);
+      
+      let data = {
+		  productId: id,
+		  name: name,
+		  price: price,
+		  count: 1,
+	  }
+      
+      cartItems.push(data);
+      
+      var listItem = document.createElement('li');
+      listItem.className = 'list-item';
+      
+      var itemId = document.createElement('input');
+      itemId.type = 'hidden';
+      itemId.value = id
+      
+      var itemName = document.createElement('span');
+      itemName.className = 'name';
+      itemName.textContent = name;
+      
+      var quantity = document.createElement('span');
+      quantity.className = 'quantity';
+      quantity.textContent = '1개';
+      
+      var itemPrice = document.createElement('span');
+      itemPrice.className = 'price';
+      itemPrice.textContent = price.toLocaleString() + '원';
+      
+      listItem.appendChild(itemName);
+      listItem.appendChild(itemId);
+      listItem.appendChild(quantity);
+      listItem.appendChild(itemPrice);
+      
+      cartItemsElement.appendChild(listItem);
+      
+      // 총 가격 업데이트
+      var totalPrice = parseInt(total.textContent.replace(',', '').replace('원', ''));
+      totalPrice += price;
+      total.textContent = totalPrice.toLocaleString() + '원';
+    }
+    
+    console.log(cartItems);
+    
+    function checkout() {
+		/*console.log("주문시작");
+      $.ajax({
+			type: 'POST',
+			url:'/order/add',
+			dataType:'json',
+			contentType:'application/json; charset=utf-8',
+			data: JSON.stringify(cartItems),
+		}).done((result)=>{
+			location.reload();
+		}).fail((error)=>{
+			console.log(error);
+		});
+      
+      // 주문 완료 후 담기 리스트 초기화
+      cartItems.innerHTML = '';
+      total.textContent = '0원';*/
+       AUTHNICE.requestPay({
+        clientId: 'S1_fbc7fc6d26234c03a046d134c7d2cdb8',
+        method: 'card',
+        orderId: '7777',
+        amount: 1004,
+        goodsName: '나이스페이-상품',
+        returnUrl: 'http://localhost:8080/clientAuth',
+        fnError: function (result) {
+          alert('개발자확인용 : ' + result.errorMsg + '')
+        }
+      });
+    }
+  </script>
+</body>
+</html>

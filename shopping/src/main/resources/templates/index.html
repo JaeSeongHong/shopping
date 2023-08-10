@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>[조인트리X스마트인재개발원] SW캠프</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+body {
+  overflow: hidden;
+}
+	
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 200px;
+}
+
+.button:last-child {
+  margin-bottom: 0;
+}
+
+.button:hover {
+  background-color: #45a049;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+	<button type="button" class="button" onclick="location.href='/product'">상품관리</button>
+	<button type="button" class="button" onclick="location.href='/order'">주문하기</button>
+	<button type="button" class="button" onclick="location.href='/orderList'">주문내역</button>
+</div>
+<script>
+	
+</script>
+</body>
+</html>
