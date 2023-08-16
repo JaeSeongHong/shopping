@@ -52,7 +52,7 @@ public class IndexController {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private final String CLIENT_ID = "S1_fbc7fc6d26234c03a046d134c7d2cdb8";
-	private final String SECRET_KEY = "93d08b95463d4465adb4d398437c5226";
+	private final String SECRET_KEY = "6d56f181c5cb4726a2f36cd9669a5038";
 
 	@GetMapping("/")
 	public String index(ModelMap model) {
